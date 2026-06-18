@@ -25,7 +25,7 @@ class TileAssistant extends IPSModule
 	    if($Ident === 'message') {
             $script = $this->ReadPropertyInteger($Ident);
             if($script && @IPS_GetScript($script)) {
-                $res = IPS_RunScriptEx($script, [
+                $res = IPS_RunScriptWaitEx($script, [
                     "text" => $Value,
                     "language" => 'auto'
                 ]);
