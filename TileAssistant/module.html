@@ -277,6 +277,12 @@
   const sendBtn = document.getElementById('send-btn');
 
   let typingEl = null;
+  let currentUser = null;
+
+  fetch('/hook/detect_user')
+    .then(function (r) { return r.text(); })
+    .then(function (id) { currentUser = id.trim(); })
+    .catch(function () { /* proceed without user id */ });
 
   function scrollToBottom() {
     messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -382,7 +388,7 @@
     inputEl.style.height = 'auto';
     showTyping();
     if (typeof requestAction === 'function') {
-      requestAction('message', text);
+      requestAction('message', { text: text, speaker: currentUser });
     }
   }
 
