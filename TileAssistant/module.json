@@ -1,0 +1,12 @@
+{
+	"id": "{AD7A5DFD-C4AB-41BE-96C9-293E3900C387}",
+	"name": "TileAssistant",
+	"type": 3,
+	"vendor": "MK",
+	"aliases": [],
+	"parentRequirements": [],
+	"childRequirements": [],
+	"implemented": [],
+	"prefix": "Tile",
+    "url": "https://github.com/tharit/IPSymconTileAssistant"
+}

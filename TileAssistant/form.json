@@ -1,0 +1,9 @@
+{
+    "elements": [
+        {
+            "name": "message",
+            "type": "SelectScript",
+            "caption": "Message handler script"
+        }
+    ]
+}

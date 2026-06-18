@@ -1,0 +1,12 @@
+{
+    "id": "{F735C83C-53BB-4706-8315-45C69A7AF21B}",
+    "name": "Tile Assistant",
+    "author": "Martin Kleinhans",
+    "url": "https://github.com/tharit/IPSymconTileAssistant",
+    "compatibility": {
+        "version": "7.1"
+    },
+    "version": "1.0",
+    "build": 1,
+    "date": 1
+}
