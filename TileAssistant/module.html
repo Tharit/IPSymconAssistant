@@ -284,6 +284,15 @@
     .then(function (id) { currentUser = id.trim(); })
     .catch(function () { /* proceed without user id */ });
 
+  function guidGenerator() {
+   const S4 = function() {
+    return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+   };
+   return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+  }
+
+  const sessionId = guidGenerator();
+
   function scrollToBottom() {
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
@@ -377,6 +386,10 @@
       appendError('The assistant encountered an error.');
       return;
     }
+    if(!parsed.session || parsed.session !== sessionId) {
+      // Ignore messages from other sessions
+      return;
+    }
     appendMessage('agent', parsed.text, parsed.question === true);
   }
 
@@ -388,7 +401,7 @@
     inputEl.style.height = 'auto';
     showTyping();
     if (typeof requestAction === 'function') {
-      requestAction('message', JSON.stringify({ text: text, speaker: currentUser }));
+      requestAction('message', JSON.stringify({ text: text, session: sessionId, speaker: currentUser }));
     }
   }
 
