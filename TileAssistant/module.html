@@ -50,9 +50,11 @@
     }
   }
 
-  html, body {
+  html {
     height: 100%;
-    width: 100%;
+  }
+
+  body {
     overflow: hidden;
     background: var(--bg);
     color: var(--text);
@@ -63,10 +65,10 @@
   #app {
     display: flex;
     flex-direction: column;
-    height: 100%;
     max-width: 800px;
     margin: 0 auto;
     width: 100%;
+    /* height set dynamically by JS to account for injected body margins */
   }
 
   #messages {
@@ -399,6 +401,17 @@
   });
 
   window.handleMessage = handleMessage;
+
+  function fitApp() {
+    const s = window.getComputedStyle(document.body);
+    const mt = parseFloat(s.marginTop)    || 0;
+    const mb = parseFloat(s.marginBottom) || 0;
+    document.getElementById('app').style.height = (window.innerHeight - mt - mb) + 'px';
+  }
+
+  fitApp();
+  window.addEventListener('resize', fitApp);
+  new MutationObserver(fitApp).observe(document.body, { attributes: true, attributeFilter: ['style'] });
 })();
 </script>
 </body>
