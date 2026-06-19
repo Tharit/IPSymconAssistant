@@ -485,7 +485,7 @@
       // Ignore messages from other sessions
       return;
     }
-    appendMessage('agent', parsed.text, parsed.question === true, parsed.refs || []);
+    appendMessage(parsed.role || 'agent', parsed.text, parsed.question === true, parsed.refs || []);
   }
 
   function submit() {
