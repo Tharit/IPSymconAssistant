@@ -118,7 +118,6 @@
   }
 
   .bubble {
-    max-width: min(72%, 560px);
     padding: 10px 14px;
     line-height: 1.55;
     word-break: break-word;
@@ -174,6 +173,7 @@
     flex-direction: column;
     gap: 6px;
     max-width: min(72%, 560px);
+    width: fit-content;
   }
   .bubble-row.user .bubble-col { align-items: flex-end; }
 
@@ -332,11 +332,6 @@
   let typingEl = null;
   let currentUser = null;
 
-  fetch('/hook/detect_user')
-    .then(function (r) { return r.text(); })
-    .then(function (id) { currentUser = id.trim(); })
-    .catch(function () { /* proceed without user id */ });
-
   function guidGenerator() {
    const S4 = function() {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
@@ -345,6 +340,16 @@
   }
 
   const sessionId = guidGenerator();
+
+  fetch('/hook/detect_user')
+    .then(function (r) { return r.text(); })
+    .then(function (id) { 
+        currentUser = id.trim();
+        if (typeof requestAction === 'function') {
+            requestAction('load', JSON.stringify({ session: sessionId, speaker: currentUser }));
+        }
+    })
+    .catch(function () { /* proceed without user id */ });
 
   function scrollToBottom() {
     messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -393,7 +398,7 @@
         if (isAction) {
           chip.innerHTML =
             '<i class="fa-light fa-bolt" style="font-size:11px" aria-hidden="true"></i>' +
-            '<span>' + ref.name + ' · ' + ref.action + (ref.value ? '('+ ref.value +')' : '') + '</span>';
+            '<span>' + ref.name + ' · ' + (ref.value ? ref.value : '') + '</span>';
         } else {
           chip.innerHTML =
             '<i class="fa-light fa-' + (ref.icon ? ref.icon : 'cube') + '" style="font-size:11px" aria-hidden="true"></i>' +
@@ -466,6 +471,10 @@
       parsed = typeof data === 'string' ? JSON.parse(data) : data;
     } catch (e) {
       appendError('Received malformed response.');
+      return;
+    }
+    if(Array.isArray(parsed)) {
+      parsed.forEach(handleMessage);
       return;
     }
     if (!parsed.success) {
