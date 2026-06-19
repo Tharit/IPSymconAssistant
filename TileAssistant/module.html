@@ -168,6 +168,59 @@
     color: var(--bubble-question-text);
   }
 
+  /* --- ref chips --- */
+  .bubble-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: min(72%, 560px);
+  }
+  .bubble-row.user .bubble-col { align-items: flex-end; }
+
+  .ref-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 0 2px;
+  }
+  .bubble-row.user .ref-chips { justify-content: flex-end; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px 4px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s, transform 0.1s;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .chip:active { transform: scale(0.95); opacity: 0.75; }
+
+  /* plain reference — subtle outline style */
+  .chip.ref {
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    border: 0.5px solid var(--border);
+  }
+  .chip.ref:hover { background: var(--border); }
+
+  /* action — filled, warmer colour */
+  .chip.action {
+    background: #fff4e0;
+    color: #8a5200;
+    border: 0.5px solid rgba(138,82,0,0.2);
+  }
+  @media (prefers-color-scheme: dark) {
+    .chip.action { background: #3a2600; color: #f5c96a; border-color: rgba(245,201,106,0.2); }
+  }
+  .chip.action:hover { filter: brightness(1.08); }
+  /* --- end ref chips --- */
+
   .typing {
     display: flex;
     align-items: center;
@@ -284,31 +337,23 @@
     .then(function (id) { currentUser = id.trim(); })
     .catch(function () { /* proceed without user id */ });
 
-  function guidGenerator() {
-   const S4 = function() {
-    return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-   };
-   return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-  }
-
-  const sessionId = guidGenerator();
-
   function scrollToBottom() {
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  function appendMessage(role, text, isQuestion) {
+  function appendMessage(role, text, isQuestion, refs) {
     const row = document.createElement('div');
     row.className = 'bubble-row' + (role === 'user' ? ' user' : '');
 
     const avatar = document.createElement('div');
     avatar.className = 'avatar' + (role === 'user' ? ' user-avatar' : '');
     avatar.setAttribute('aria-hidden', 'true');
-    if (role === 'user') {
-      avatar.innerHTML = '<i class="fa-light fa-user" style="font-size:12px"></i>';
-    } else {
-      avatar.innerHTML = '<i class="fa-light fa-robot" style="font-size:12px"></i>';
-    }
+    avatar.innerHTML = role === 'user'
+      ? '<i class="fa-light fa-user" style="font-size:12px"></i>'
+      : '<i class="fa-light fa-robot" style="font-size:12px"></i>';
+
+    const col = document.createElement('div');
+    col.className = 'bubble-col';
 
     const bubble = document.createElement('div');
     bubble.className = 'bubble ' + role;
@@ -321,15 +366,47 @@
       bubble.appendChild(ind);
     }
 
-    const textNode = document.createTextNode(text);
-    bubble.appendChild(textNode);
+    bubble.appendChild(document.createTextNode(text));
+    col.appendChild(bubble);
+
+    if (refs && refs.length) {
+      const chipsRow = document.createElement('div');
+      chipsRow.className = 'ref-chips';
+
+      refs.forEach(function (ref) {
+        const isAction = !!ref.action;
+        const chip = document.createElement('button');
+        chip.className = 'chip ' + (isAction ? 'action' : 'ref');
+        chip.setAttribute('aria-label', isAction
+          ? 'Object ' + ref.id + ': ' + ref.action
+          : 'Open object ' + ref.id);
+
+        if (isAction) {
+          chip.innerHTML =
+            '<i class="fa-light fa-bolt" style="font-size:11px" aria-hidden="true"></i>' +
+            '<span>#' + ref.id + ' · ' + ref.action + '</span>';
+        } else {
+          chip.innerHTML =
+            '<i class="fa-light fa-cube" style="font-size:11px" aria-hidden="true"></i>' +
+            '<span>#' + ref.id + '</span>';
+        }
+
+        chip.addEventListener('click', function () {
+          if (typeof openObject === 'function') openObject(ref.id);
+        });
+
+        chipsRow.appendChild(chip);
+      });
+
+      col.appendChild(chipsRow);
+    }
 
     if (role === 'user') {
-      row.appendChild(bubble);
+      row.appendChild(col);
       row.appendChild(avatar);
     } else {
       row.appendChild(avatar);
-      row.appendChild(bubble);
+      row.appendChild(col);
     }
 
     messagesEl.appendChild(row);
@@ -386,22 +463,18 @@
       appendError('The assistant encountered an error.');
       return;
     }
-    if(!parsed.session || parsed.session !== sessionId) {
-      // Ignore messages from other sessions
-      return;
-    }
-    appendMessage('agent', parsed.text, parsed.question === true);
+    appendMessage('agent', parsed.text, parsed.question === true, parsed.refs || []);
   }
 
   function submit() {
     const text = inputEl.value.trim();
     if (!text) return;
-    appendMessage('user', text, false);
+    appendMessage('user', text, false, []);
     inputEl.value = '';
     inputEl.style.height = 'auto';
     showTyping();
     if (typeof requestAction === 'function') {
-      requestAction('message', JSON.stringify({ text: text, session: sessionId, speaker: currentUser }));
+      requestAction('message', { text: text, speaker: currentUser });
     }
   }
 
