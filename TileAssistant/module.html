@@ -372,7 +372,7 @@
     const bubble = document.createElement('div');
     bubble.className = 'bubble ' + role;
 
-    if (role === 'agent' && isQuestion) {
+    if (role === 'assistant' && isQuestion) {
       bubble.classList.add('question');
       const ind = document.createElement('div');
       ind.className = 'question-indicator';
@@ -448,7 +448,7 @@
     avatar.innerHTML = '<i class="fa-light fa-robot" style="font-size:12px"></i>';
     const typing = document.createElement('div');
     typing.className = 'typing';
-    typing.setAttribute('aria-label', 'Agent is typing');
+    typing.setAttribute('aria-label', 'Assistant is typing');
     typing.innerHTML = '<span></span><span></span><span></span>';
     row.appendChild(avatar);
     row.appendChild(typing);
@@ -485,7 +485,7 @@
       // Ignore messages from other sessions
       return;
     }
-    appendMessage(parsed.role || 'agent', parsed.text, parsed.question === true, parsed.refs || []);
+    appendMessage(parsed.role || 'assistant', parsed.text, parsed.question === true, parsed.refs || []);
   }
 
   function submit() {
