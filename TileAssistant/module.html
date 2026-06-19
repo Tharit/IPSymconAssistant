@@ -474,7 +474,7 @@
     inputEl.style.height = 'auto';
     showTyping();
     if (typeof requestAction === 'function') {
-      requestAction('message', { text: text, speaker: currentUser });
+      requestAction('message', JSON.stringify({ text: text, speaker: currentUser }));
     }
   }
 
