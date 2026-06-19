@@ -23,7 +23,7 @@ class TileAssistant extends IPSModule
     public function RequestAction($Ident, $Value)
     {
 	    if($Ident === 'message' || $Ident === 'load') {
-            $script = $this->ReadPropertyInteger($Ident);
+            $script = $this->ReadPropertyInteger('message');
             if($script && @IPS_GetScript($script)) {
                 $res = IPS_RunScriptWaitEx($script, ['action'=>$Ident, 'data'=>json_decode($Value, true)]);
                 $this->UpdateVisualizationValue($res);
