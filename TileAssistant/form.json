@@ -4,6 +4,11 @@
             "name": "message",
             "type": "SelectScript",
             "caption": "Message handler script"
+        },
+        {
+            "name": "log",
+            "type": "SelectVariable",
+            "caption": "Message log variable"
         }
     ]
 }

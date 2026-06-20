@@ -485,13 +485,13 @@
       // Ignore messages from other sessions
       return;
     }
-    appendMessage(parsed.role || 'assistant', parsed.text, parsed.question === true, parsed.refs || []);
+    appendMessage(parsed.role.split(':')[0], parsed.text, parsed.question === true, parsed.refs || []);
   }
 
   function submit() {
     const text = inputEl.value.trim();
     if (!text) return;
-    appendMessage('user', text, false, []);
+    //appendMessage('user', text, false, []);
     inputEl.value = '';
     inputEl.style.height = 'auto';
     showTyping();
