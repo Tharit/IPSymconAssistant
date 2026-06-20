@@ -339,7 +339,7 @@
    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
   }
 
-  const sessionId = '';//guidGenerator();
+  const sessionId = 'default';//guidGenerator();
 
   fetch('/hook/detect_user')
     .then(function (r) { return r.text(); })
