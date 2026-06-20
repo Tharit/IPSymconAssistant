@@ -37,11 +37,10 @@ class TileAssistant extends IPSModule
 	    if($Ident === 'message') {
             $script = $this->ReadPropertyInteger('message');
             if($script && @IPS_GetScript($script)) {
-                $res = IPS_RunScriptWaitEx($script, json_decode($Value));
-                $this->UpdateVisualizationValue($res);
+                IPS_RunScriptEx($script, json_decode($Value, true));
             }
         } else if($Ident === 'load') {
-            $data = json_decode($Value);
+            $data = json_decode($Value, true);
             // $data['session'] and $data['speaker'] can be used to restore the session and user in the script
 
             // The official Archive Handler / Archive Control GUID in IP-Symcon
