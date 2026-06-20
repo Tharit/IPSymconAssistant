@@ -476,10 +476,6 @@
       parsed.forEach(handleMessage);
       return;
     }
-    hideTyping();
-    if(parsed.role.startsWith('user')) {
-        showTyping();
-    }
     if (!parsed.success) {
       appendError('The assistant encountered an error.');
       return;
@@ -488,7 +484,11 @@
       // Ignore messages from other sessions
       return;
     }
+    hideTyping();
     appendMessage(parsed.role.split(':')[0], parsed.text, parsed.question === true, parsed.refs || []);
+    if(parsed.role.startsWith('user')) {
+        showTyping();
+    }
   }
 
   function submit() {
