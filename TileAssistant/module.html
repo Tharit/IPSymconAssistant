@@ -465,7 +465,6 @@
   }
 
   function handleMessage(data) {
-    hideTyping();
     let parsed;
     try {
       parsed = typeof data === 'string' ? JSON.parse(data) : data;
@@ -476,6 +475,9 @@
     if(Array.isArray(parsed)) {
       parsed.forEach(handleMessage);
       return;
+    }
+    if(parsed.role === 'assistant') {
+      hideTyping();
     }
     if (!parsed.success) {
       appendError('The assistant encountered an error.');

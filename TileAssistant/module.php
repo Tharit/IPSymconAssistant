@@ -57,9 +57,11 @@ class TileAssistant extends IPSModule
             $idMessageLog = $this->ReadPropertyInteger('log');
             $values = AC_GetLoggedValues($idArchive, $idMessageLog, time() - 15 * 60, time(), 10);
             $res = json_encode(
-                array_map(function($item) {
-                    return $item['Value'];
-                }, $values)
+                array_values(
+                    array_map(function($item) {
+                        return $item['Value'];
+                    }, $values)
+                )
             );    
             $this->UpdateVisualizationValue($res);
         }
