@@ -476,8 +476,9 @@
       parsed.forEach(handleMessage);
       return;
     }
-    if(parsed.role === 'assistant') {
-      hideTyping();
+    hideTyping();
+    if(parsed.role === 'user') {
+        showTyping();
     }
     if (!parsed.success) {
       appendError('The assistant encountered an error.');
