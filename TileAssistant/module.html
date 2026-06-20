@@ -477,7 +477,7 @@
       return;
     }
     hideTyping();
-    if(parsed.role === 'user') {
+    if(parsed.role.startsWith('user')) {
         showTyping();
     }
     if (!parsed.success) {
